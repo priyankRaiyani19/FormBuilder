@@ -1,0 +1,43 @@
+{
+  "name": "react-tailwind-starter-pack",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.54.2",
+    "react-router": "^7.1.5",
+    "react-router-dom": "^7.1.5",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "author": "Priyank Raiyani",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.2.7"
+  }
+}
