@@ -95,10 +95,10 @@ const InputCreator = ({onAddField}) => {
                     </div>
                     {showValidation && (
                         <div className="p-3 border rounded bg-gray-800 font-bold text-gray-100 flex flex-col ">
-                            <label className="font-medium text-xl flex items-center gap-[1rem] py-3">
+                            <label className="font-medium text-2xl flex items-center gap-[1rem] py-3">
                                 <input type="checkbox" name="required" checked={field.validation.required}
                                        onChange={handleValidationChange}
-                                       className={`text-gray-800 w-[1rem] h-[1rem]`}/> Required
+                                       className={`text-gray-800 w-[2rem] h-[2rem]`}/> Required
                             </label>
                             <div className="flex flex-col gap-[1rem]">
                                 <label className="block font-medium text-xl">Min:</label>
