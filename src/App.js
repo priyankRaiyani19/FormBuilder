@@ -3,9 +3,9 @@ import RouteProvider from "./Routes/routes";
 
 function App() {
     return (
-        <div>
+
             <RouteProvider/>
-        </div>
+
     );
 }
 

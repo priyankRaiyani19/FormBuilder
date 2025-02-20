@@ -7,12 +7,11 @@ import GeneratedForm from "../pages/GeneratedForm";
 const RouteProvider = () => {
     return (
 
-         <div className="min-h-screen bg-gray-50">
              <Routes>
                  <Route path="/" element={<HomePage />} />
                  <Route path="/generated-form" element={<GeneratedForm />} />
              </Routes>
-         </div>
+
 
 
 
