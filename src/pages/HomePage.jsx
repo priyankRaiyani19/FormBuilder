@@ -21,9 +21,9 @@ const HomePage = () => {
     };
 
     return (
-        <div className=" mx-auto p-4 w-full h-[100vh] bg-[#081229] text-gray-00">
-            <h1 className="text-[3.438rem] font-bold mb-4 text-center text-white">Form Builder</h1>
-            <div className="flex  gap-6">
+        <div className=" mx-auto p-4 w-full min-h-screen bg-[#081229] text-gray-00">
+            <h1 className="lg:text-[3.438rem] text-5xl font-bold mb-4 text-center text-white">Form Builder</h1>
+            <div className="flex  gap-[2rem] lg:flex-row flex-col">
                 {/* Input Creator  */}
                 <div className={`w-full`} >
                     <InputCreator onAddField={handleAddField}/>

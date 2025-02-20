@@ -17,15 +17,15 @@ const renderField = (field, register, errors) => {
         case 'range':
             return (
                 <div key={field.id} className="mb-4">
-                    <label className="block font-semibold text-2xl mb-1">{field.label}</label>
+                    <label className="block font-semibold text-2xl mb-2">{field.label}</label>
                     <input
                         {...register(`field_${field.id}`, { required: true })}
                         type={field.type}
                         placeholder={field.placeholder}
-                        className={`w-full p-2 border rounded ${errors[`field_${field.id}`] ? 'border-red-500 text-gray-800' : 'border-gray-800 text-gray-100'} text-gray-800 bg-gray-300`}
+                        className={`w-full p-2 border rounded ${errors[`field_${field.id}`] ? 'border-red-500 ' : 'border-gray-800 '} text-gray-800 bg-gray-300 text-xl font-semibold`}
                     />
                     {errors[`field_${field.id}`] && (
-                        <p className="text-red-500 text-xs mt-1">This field is required</p>
+                        <p className="text-red-500 text-lg mt-1">This field is required</p>
                     )}
                 </div>
             );
@@ -37,10 +37,10 @@ const renderField = (field, register, errors) => {
                         {...register(`field_${field.id}`, { required: true })}
                         placeholder={field.placeholder}
                         rows="4"
-                        className={`w-full p-2 border rounded ${errors[`field_${field.id}`] ? 'border-red-500' : 'border-gray-300'}`}
+                        className={`w-full p-2 border rounded ${errors[`field_${field.id}`] ? 'border-red-500' : 'border-gray-300'} text-gray-800 bg-gray-300 text-xl font-semibold`}
                     />
                     {errors[`field_${field.id}`] && (
-                        <p className="text-red-500 text-xs mt-1">This field is required</p>
+                        <p className="text-red-500 text-lg mt-1">This field is required</p>
                     )}
                 </div>
             );
@@ -50,7 +50,7 @@ const renderField = (field, register, errors) => {
                     <label className="block font-semibold text-2xl mb-1">{field.label}</label>
                     <select
                         {...register(`field_${field.id}`, { required: true })}
-                        className={`w-full p-2 border rounded ${errors[`field_${field.id}`] ? 'border-red-500' : 'border-gray-300'}`}
+                        className={`w-full p-2 border rounded ${errors[`field_${field.id}`] ? 'border-red-500' : 'border-gray-300'} text-gray-800 bg-gray-300 text-xl font-semibold`}
                     >
                         <option value="">Select an option</option>
                         {field.options && field.options.map((option, index) => (
@@ -58,7 +58,7 @@ const renderField = (field, register, errors) => {
                         ))}
                     </select>
                     {errors[`field_${field.id}`] && (
-                        <p className="text-red-500 text-xs mt-1">This field is required</p>
+                        <p className="text-red-500 text-lg mt-1">This field is required</p>
                     )}
                 </div>
             );
@@ -69,7 +69,7 @@ const renderField = (field, register, errors) => {
                         <input
                             {...register(`field_${field.id}`)}
                             type="checkbox"
-                            className="h-4 w-4 text-blue-600 mr-2"
+                            className="h-4 w-4  mr-2 text-gray-800 bg-gray-300 text-xl font-semibold"
                         />
                         <label className="font-medium">{field.label}</label>
                     </div>
@@ -87,14 +87,14 @@ const renderField = (field, register, errors) => {
                                     type="radio"
                                     name={`field_${field.id}`}
                                     value={option}
-                                    className="h-4 w-4 text-blue-600 mr-2"
+                                    className="h-4 w-4 mr-2 text-gray-800 bg-gray-300 text-xl font-semibold"
                                 />
                                 <label>{option}</label>
                             </div>
                         ))}
                     </div>
                     {errors[`field_${field.id}`] && (
-                        <p className="text-red-500 text-xs mt-1">This field is required</p>
+                        <p className="text-red-400  mt-1 text-lg">This field is required</p>
                     )}
                 </div>
             );
