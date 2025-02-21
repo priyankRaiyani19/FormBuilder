@@ -1,65 +1,94 @@
-import React from 'react';
-import {GrDrag} from "react-icons/gr";
+import React, {useRef} from 'react';
+import {useDrag, useDrop} from "react-dnd";
+// import {GrDrag} from "react-icons/gr";
 
-const FormField = ({ field, onEdit, onDelete }) => {
-    return (
-        <div className=" bg-[#081229] p-3 rounded shadow flex flex-row justify-between items-center border-2">
-            <div className="flex items-center gap-2">
-                <GrDrag className={`text-2xl`}/>
-            <label className="block text-2xl text-gray-100">{field.label}</label>
+// const FormField = ({field, onEdit, onDelete}) => {
+//     return (
 
+    const FormField = ({field, index, onDelete, onEdit, onMove}) => {
+        const ref = useRef(null);
+        const [{isDragging}, drag] = useDrag({
+            type: 'FORM_FIELD',
+            item: {id: field.id, index},
+            collect: (monitor) => ({
+                isDragging: monitor.isDragging(),
+            }),
+        });
+        const [{handlerId}, drop] = useDrop({
+            accept: 'FORM_FIELD',
+            collect(monitor) {
+                return {
+                    handlerId: monitor.getHandlerId(),
+                };
+            },
+            hover(item, monitor) {
+                if (!ref.current) {
+                    return;
+                }
+                const dragIndex = item.index;
+                const hoverIndex = index;
+                if (dragIndex === hoverIndex) {
+                    return;
+                }
+                const hoverBoundingRect = ref.current?.getBoundingClientRect();
+                const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+                const clientOffset = monitor.getClientOffset();
+                const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+                if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+                    return;
+                }
+                if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+                    return;
+                }
+                onMove(dragIndex, hoverIndex);
+                item.index = hoverIndex;
+            },
+        });
+        drag(drop(ref));
+        return (
+            <div
+                ref={ref}
+                className={`p-4 border border-gray-200 rounded-lg shadow-md hover:shadow-lg
+        transition-all duration-200 ${isDragging ? 'opacity-50' : ''}
+        bg-gradient-to-r from-white to-gray-50 cursor-move`}
+                data-handler-id={handlerId}
+            >
+                <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-800">{field.label}</span>
+                    <div className="space-x-2">
+                        <button
+                            onClick={() => onEdit(field.id)}
+                            className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600
+              text-white rounded-md shadow hover:from-blue-600 hover:to-blue-700
+              transition-all duration-200"
+                        >
+                            Edit
+                        </button>
+                        <button
+                            onClick={() => onDelete(field.id)}
+                            className="px-3 py-1.5 bg-gradient-to-r from-red-500 to-red-600
+              text-white rounded-md shadow hover:from-red-600 hover:to-red-700
+              transition-all duration-200"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </div>
+                {renderField(field)}
             </div>
-            {/*{field.type === 'text' && (*/}
-            {/*    // <input*/}
-            {/*    //     type="text"*/}
-            {/*    //     placeholder={field.placeholder}*/}
-            {/*    //     required={field.validation?.required}*/}
-            {/*    //     min={field.validation?.min}*/}
-            {/*    //     max={field.validation?.max}*/}
-            {/*    //     maxLength={field.validation?.maxLength}*/}
-            {/*    //     pattern={field.validation?.pattern}*/}
-            {/*    //     className="w-full p-2 border rounded"*/}
-            {/*    // />*/}
-            {/*)}*/}
-
-            {/*{field.type === 'textarea' && (*/}
-            {/*    <textarea*/}
-            {/*        placeholder={field.placeholder}*/}
-            {/*        required={field.validation?.required}*/}
-            {/*        className="w-full p-2 border rounded"*/}
-            {/*    />*/}
-            {/*)}*/}
-
-            {/*{field.type === 'select' && (*/}
-            {/*    <select required={field.validation?.required} className="w-full p-2 border rounded">*/}
-            {/*        <option value="">Select an option</option>*/}
-            {/*        {field.options?.map((option, index) => (*/}
-            {/*            <option key={index} value={option}>{option}</option>*/}
-            {/*        ))}*/}
-            {/*    </select>*/}
-            {/*)}*/}
-
-            {/*{field.type === 'checkbox' && (*/}
-            {/*    <input type="checkbox" className="w-5 h-5" required={field.validation?.required} />*/}
-            {/*)}*/}
-
-            {/*{field.type === 'radio' && field.options?.map((option, index) => (*/}
-            {/*    <label key={index} className="block">*/}
-            {/*        <input type="radio" name={field.label} value={option} required={field.validation?.required} /> {option}*/}
-            {/*    </label>*/}
-            {/*))}*/}
-
-            {/* Edit & Delete Buttons */}
-            <div className="mt-2 flex space-x-2">
-                <button onClick={onEdit} className="px-3 py-1 bg-[#516391] text-white rounded hover:bg-blue-600">
-                    Edit
-                </button>
-                <button onClick={onDelete} className="px-3 py-1 bg-[#516391] text-white rounded hover:bg-red-600">
-                    Delete
-                </button>
+        );
+    };
+    const renderField = (field) => {
+        return (
+            <div className="mt-2 p-2 bg-gray-50 rounded-md border border-gray-200">
+                <span className="text-sm text-gray-600">Type: {field.type}</span>
+                {field.validation?.required && (
+                    <span className="ml-2 text-red-500 text-sm">*Required</span>
+                )}
             </div>
-        </div>
-    );
-};
 
-export default FormField;
+
+        );
+    };
+
+    export default FormField;
