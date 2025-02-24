@@ -1,18 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
-import RenderField from "../component/renderFiled";
-
+import { useLocation } from 'react-router-dom';
+import RenderField from '../component/renderFiled';
 
 const GeneratedForm = () => {
-    const [fields, setFields] = useState([]);
+    const location = useLocation();
+    const fields = location.state?.fields || [];
     const { register, handleSubmit, formState: { errors } } = useForm();
-
-    useEffect(() => {
-        const savedFields = localStorage.getItem('formFields');
-        if (savedFields) {
-            setFields(JSON.parse(savedFields));
-        }
-    }, []);
 
     const onSubmit = (data) => {
         console.log("Submitted Data:", data);

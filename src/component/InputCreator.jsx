@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
-import {options} from "../data/options";
+import React, { useState, useEffect } from 'react';
+import { options } from "../data/options";
 
-const InputCreator = ({onAddField}) => {
+const InputCreator = ({ onAddField, editingField,setEditingField }) => {
     const [field, setField] = useState({
         type: 'text',
         label: '',
@@ -19,37 +19,54 @@ const InputCreator = ({onAddField}) => {
     const [showValidation, setShowValidation] = useState(false);
     const [newOption, setNewOption] = useState("");
 
+    useEffect(() => {
+        if (editingField) {
+            setField(editingField);
+            setShowValidation(!!editingField.validation);
+        }
+    }, [editingField]);
+
+
+    const onCancelEdit = () => {
+
+        setEditingField(false);
+        setShowValidation(false);
+        // setField(null);
+        setField({...field, type: 'text', label: '',placeholder: ""     });
+
+    }
+
     const handleChange = (e) => {
-        const {name, value, type, checked} = e.target;
+        const { name, value, type, checked } = e.target;
         if (type === 'checkbox') {
-            setField({...field, validation: {...field.validation, [name]: checked}});
+            setField({ ...field, validation: { ...field.validation, [name]: checked } });
         } else {
-            setField({...field, [name]: value});
+            setField({ ...field, [name]: value });
         }
     };
 
     const handleValidationChange = (e) => {
-        const {name, value, type, checked} = e.target;
+        const { name, value, type, checked } = e.target;
         setField({
             ...field,
-            validation: {...field.validation, [name]: type === 'checkbox' ? checked : value},
+            validation: { ...field.validation, [name]: type === 'checkbox' ? checked : value },
         });
     };
 
     const handleAddOption = () => {
         if (newOption.trim() !== "") {
-            setField({...field, options: [...field.options, newOption.trim()]});
+            setField({ ...field, options: [...field.options, newOption.trim()] });
             setNewOption("");
         }
     };
 
     const handleRemoveOption = (index) => {
-        setField({...field, options: field.options.filter((_, i) => i !== index)});
+        setField({ ...field, options: field.options.filter((_, i) => i !== index) });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onAddField({...field, id: Date.now()});
+        onAddField(field);
         setField({
             type: 'text',
             label: '',
@@ -67,111 +84,82 @@ const InputCreator = ({onAddField}) => {
     };
 
     return (
-        <div className="w-full bg-[#001F3F] p-5  border-2 text-white rounded-lg">
+        <div className="">
+            <h2 className="text-3xl font-bold w-full text-center text-[#DBD8E3]">{editingField ? 'Edit Field' : 'Create Field'}</h2>
 
-            <div className={`flex text-[#16213E] items-center justify-center gap-4 `}>
-                <h2 className="text-3xl font-bold min-w-fit text-[#DBD8E3]">
-                    Layout
-                </h2>
-            </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="flex flex-col gap-4">
+                    <label className="text-xl">Field Type:</label>
+                    <select name="type" value={field.type} onChange={handleChange} className="w-full p-3 border rounded text-black text-2xl">
+                        {options.map(ele => (
+                            <option key={ele.id} value={ele.value}>{ele.text}</option>
+                        ))}
+                    </select>
+                </div>
 
-            <div className="p-4 text-white rounded-lg">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="scroll-auto flex flex-col gap-[1rem]">
-                        <label className="block font-medium text-xl">Field Type:</label>
-                        <select name="type" value={field.type} onChange={handleChange}
-                                className="w-full p-3 border rounded text-black text-2xl font-semibold">
-                            {options.map(ele => (
-                                <option key={ele.id} value={ele.value}>{ele.text}</option>
+                <div className="flex flex-col gap-4">
+                    <label className="text-xl">Name:</label>
+                    <input type="text" name="label" required placeholder="Enter field name" value={field.label} onChange={handleChange} className="w-full p-3 border rounded text-black text-2xl" />
+                </div>
+
+                {field.type === "select" && (
+                    <div className="flex flex-col gap-4">
+                        <label className="text-xl">Options:</label>
+                        <div className="flex gap-2">
+                            <input type="text" value={newOption} onChange={(e) => setNewOption(e.target.value)} placeholder="Enter option" className="w-full p-3 border rounded text-black text-2xl" />
+                            <button type="button" onClick={handleAddOption} className="bg-green-600 px-4 py-2 rounded text-white font-bold">Add</button>
+                        </div>
+                        <ul>
+                            {field.options.map((option, index) => (
+                                <li key={index} className="flex justify-between items-center mt-2 bg-gray-700 p-2 rounded">
+                                    {option}
+                                    <button type="button" onClick={() => handleRemoveOption(index)} className="text-red-400 font-bold">X</button>
+                                </li>
                             ))}
-                        </select>
+                        </ul>
                     </div>
+                )}
 
-                    <div className="text-white flex flex-col gap-[1rem]">
-                        <label className="block font-medium text-xl">Name:</label>
-                        <input type="text" name="label" required placeholder="Enter name of field"
-                               value={field.label} onChange={handleChange}
-                               className="w-full p-3 border rounded text-black text-2xl font-semibold"/>
+                <div className="flex flex-col gap-4">
+                    <label className="text-xl">Placeholder:</label>
+                    <input type="text" name="placeholder" required value={field.placeholder} onChange={handleChange} className="w-full p-3 border rounded text-black text-2xl" />
+                </div>
+
+                <div className="flex items-center gap-4 text-xl">
+                    <input type="checkbox" id="showvalid" checked={showValidation} onChange={() => setShowValidation(!showValidation)} className="w-6 h-6" />
+                    <label htmlFor="showvalid">Show Validation</label>
+                </div>
+
+                {showValidation && (
+                    <div className="p-3 border rounded bg-gray-800 font-bold text-gray-100">
+                        <label className="flex items-center gap-4 text-xl">
+                            <input type="checkbox" name="required" checked={field.validation.required} onChange={handleValidationChange} className="w-6 h-6" />
+                            Required
+                        </label>
+                        <label className="text-xl">Min:</label>
+                        <input type="number" name="min" value={field.validation.min} onChange={handleValidationChange} className="w-full p-3 border rounded text-black text-2xl" />
+                        <label className="text-xl">Max:</label>
+                        <input type="number" name="max" value={field.validation.max} onChange={handleValidationChange} className="w-full p-3 border rounded text-black text-2xl" />
+
+                        <label className="text-xl">maxLength:</label>
+                        <input type="number" name="maxLength" value={field.validation.maxLength} onChange={handleValidationChange} className="w-full p-3 border rounded text-black text-2xl" />
+
+                        <label className="text-xl">pattern:</label>
+                        <input type="text" name="pattern" value={field.validation.pattern} onChange={handleValidationChange} className="w-full p-3 border rounded text-black text-2xl" />
                     </div>
+                )}
 
-                    {field.type === "select" && (
-                        <div className="text-white flex flex-col gap-[1rem]">
-                            <label className="block font-medium text-xl">Options:</label>
-                            <div className="flex gap-2">
-                                <input type="text" value={newOption} onChange={(e) => setNewOption(e.target.value)}
-                                       placeholder="Enter option"
-                                       className="w-full p-3 border rounded text-black text-2xl font-semibold"/>
-                                <button type="button" onClick={handleAddOption}
-                                        className="bg-green-600 px-4 py-2 rounded text-white font-bold">Add
-                                </button>
-                            </div>
-                            <ul>
-                                {field.options.map((option, index) => (
-                                    <li key={index}
-                                        className="flex justify-between items-center mt-2 bg-gray-700 p-2 rounded">
-                                        {option}
-                                        <button type="button" onClick={() => handleRemoveOption(index)}
-                                                className="text-red-400 font-bold">X
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-
-                    <div className="text-white flex flex-col gap-[1rem]">
-                        <label className="block font-medium text-xl">Placeholder:</label>
-                        <input type="text" name="placeholder" required value={field.placeholder}
-                               onChange={handleChange} placeholder="Enter placeholder"
-                               className="w-full p-3 border rounded text-black text-2xl font-semibold"/>
-                    </div>
-
-                    <div className="text-white flex items-center gap-[1rem] text-[1.5rem]">
-                        <input type="checkbox" id="showvalid" defaultChecked={false}
-                               className="w-[2rem] h-[2rem] checked:text-green-600"
-                               onChange={() => setShowValidation(!showValidation)}/>
-                        <label htmlFor="showvalid">Show Validation</label>
-                    </div>
-
-                    {showValidation && (
-                        <div className="p-3 border rounded bg-gray-800 font-bold text-gray-100 flex flex-col">
-                            <label className="font-medium text-2xl flex items-center gap-[1rem] py-3">
-                                <input type="checkbox" name="required" checked={field.validation.required}
-                                       onChange={handleValidationChange}
-                                       className="text-gray-800 w-[2rem] h-[2rem]"/> Required
-                            </label>
-                            <div className="flex flex-col gap-[1rem]">
-                                <label className="block font-medium text-xl">Min:</label>
-                                <input type="number" name="min" value={field.validation.min}
-                                       onChange={handleValidationChange}
-                                       className="w-full p-3 border rounded text-black text-2xl font-semibold"/>
-                            </div>
-                            <div>
-                                <label className="block font-medium text-xl">Max:</label>
-                                <input type="number" name="max" value={field.validation.max}
-                                       onChange={handleValidationChange}
-                                       className="w-full p-3 border rounded text-black text-2xl font-semibold"/>
-                            </div>
-                            <div>
-                                <label className="block font-medium text-xl">Max Length:</label>
-                                <input type="number" name="maxLength" value={field.validation.maxLength}
-                                       onChange={handleValidationChange}
-                                       className="w-full p-3 border rounded text-black text-2xl font-semibold"/>
-                            </div>
-                            <div>
-                                <label className="block font-medium text-xl">Pattern:</label>
-                                <input type="text" name="pattern" value={field.validation.pattern}
-                                       onChange={handleValidationChange}
-                                       className="w-full p-3 border rounded text-black text-xl font-semibold"/>
-                            </div>
-                        </div>
-                    )}
-
-                    <button type="submit"
-                            className="px-4 py-5 text-xl font-bold bg-[#9290C3] text-white rounded">Add Field
+                <div className="flex gap-8 w-full text-center mx-auto">
+                    <button type="submit" className="px-4 py-3 text-xl font-bold bg-[#9290C3] text-white rounded">
+                        {editingField ? 'Update Field' : 'Add Field'}
                     </button>
-                </form>
-            </div>
+                    {editingField && (
+                        <button type="button" onClick={onCancelEdit} className="px-4 py-3 text-xl font-bold bg-red-500 text-white rounded">
+                            Cancel
+                        </button>
+                    )}
+                </div>
+            </form>
         </div>
     );
 };
