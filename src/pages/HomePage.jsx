@@ -22,10 +22,7 @@ const HomePage = () => {
     };
 
 
-    const onCancelEdit = () => {
 
-        setEditingField(false);
-    }
 
     const handleDeleteField = (fieldId) => {
         setFields(fields.filter(field => field.id !== fieldId));
