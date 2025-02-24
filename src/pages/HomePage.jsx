@@ -49,7 +49,7 @@ const HomePage = () => {
                     onDeleteField={handleDeleteField}
 
                 />
-                {/* Generate Form Button */}
+
                 {fields.length > 0 && (
                     <div className="flex justify-center mt-4">
                         <button onClick={handleGenerateForm} className="px-6 py-3 text-xl font-bold bg-[#9290C3] text-white rounded">
